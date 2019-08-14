@@ -1,20 +1,31 @@
 <template>
-  <v-container grid-list-md fill-height fluid>
+  <v-container grid-list-md fill-height fluid class="no-select">
     <v-toolbar app flat class="transparent pt-3 px-5">
-      <v-card class="round-right" width="15vw" color="primary" dark>
-        <v-card-title class="pa-2 no-select">
-          <v-icon size="35">
-            mdi-account
-          </v-icon>
-          <span class="title ml-3">Operator</span>
-        </v-card-title>
-      </v-card>
+      <v-menu offset-y>
+        <template slot="activator">
+          <v-btn large color="primary" class="pl-1 pr-2">
+            <v-icon size="30">
+              mdi-account
+            </v-icon>
+            <span class="title ml-3 text-none">{{
+              user.firstname + ' ' + user.lastname
+            }}</span>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-tile @click="logout()">
+            <v-list-tile-title>
+              Logout
+            </v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
       <v-toolbar-title class="font-weight-bold">
-        <span class="ml-5 no-select">{{ hmi === null ? '' : hmi.name }}</span>
+        <span class="ml-5 ">{{ hmi === null ? '' : hmi.name }}</span>
       </v-toolbar-title>
       <v-select
         v-model="lineIdSelected"
-        class="ml-5 select-line title font-weight-regular no-select"
+        class="ml-5 select-line title font-weight-regular "
         :items="lines"
         item-text="name"
         item-value="id"
@@ -27,13 +38,13 @@
         class="ml-5"
         @click="showReworkDialog()"
       >
-        <span class="title font-weight-regular no-select">rework</span>
+        <span class="title font-weight-regular ">rework</span>
       </v-btn>
       <v-spacer />
-      <span class="title mr-3 no-select">
+      <span class="title mr-3 ">
         {{ dateTime }}
       </span>
-      <span class="title mr-5 no-select">
+      <span class="title mr-5 ">
         {{ shift }}
       </span>
     </v-toolbar>
@@ -51,18 +62,18 @@
               {{ snackbar.text }}
             </v-snackbar>
             <v-toolbar flat dark color="primary" class="round-top px-3">
-              <v-layout row class="text-xs-center no-select">
+              <v-layout row class="text-xs-center ">
                 <v-flex xs4 sm4 md4 lg4 xl4>
                   <v-icon>settings</v-icon>
-                  <span class="title ml-1">Mesin</span>
+                  <span class="title ml-1">Machine</span>
                 </v-flex>
                 <v-flex xs4 sm4 md4 lg4 xl4>
                   <v-icon>mdi-pulse</v-icon>
-                  <span class="title ml-1">Aksi</span>
+                  <span class="title ml-1">Action</span>
                 </v-flex>
                 <v-flex xs4 sm4 md4 lg4 xl4>
                   <v-icon>mdi-history</v-icon>
-                  <span class="title ml-1">Histori</span>
+                  <span class="title ml-1">History</span>
                 </v-flex>
               </v-layout>
             </v-toolbar>
@@ -74,18 +85,14 @@
                   v-for="mechine in mechines"
                   :key="mechine.id"
                   row
-                  class="text-xs-center no-select"
+                  class="text-xs-center "
                   align-center
                 >
                   <v-flex xs6 sm6 md6>
                     <span class="title ml-3">{{ mechine.name }}</span>
                   </v-flex>
                   <v-flex xs6 sm6 md6>
-                    <v-btn
-                      color="primary"
-                      class="no-select"
-                      @click="showDowntimeDialog(mechine)"
-                    >
+                    <v-btn color="primary" @click="showDowntimeDialog(mechine)">
                       downtime
                     </v-btn>
                   </v-flex>
@@ -99,8 +106,8 @@
                     column
                     :class="
                       (index + 1) % 2 == 0
-                        ? ' text-xs-left subheading grey-background no-select'
-                        : 'text-xs-left subheading no-select'
+                        ? ' text-xs-left subheading grey-background '
+                        : 'text-xs-left subheading '
                     "
                   >
                     <v-flex class="pl-5 pb-0 mt-1">
@@ -111,7 +118,14 @@
                     <v-flex class="ml-4 pl-5 py-0">
                       <span>
                         {{ histori.reason }}
-                        {{ '{ ' + histori.duration + ' minutes' + ' }' }}
+                        {{
+                          '{ ' +
+                            histori.duration +
+                            ' minutes' +
+                            ' }' +
+                            ' | ' +
+                            histori.shift
+                        }}
                       </span>
                     </v-flex>
                     <v-flex class="ml-4 pl-5 pt-0">
@@ -142,7 +156,7 @@
         <v-card-title class="pa-0 ma-0">
           <v-toolbar color="primary" dark>
             <v-spacer />
-            <span class="title no-select">Setup HMI</span>
+            <span class="title ">Setup HMI</span>
             <v-spacer />
           </v-toolbar>
         </v-card-title>
@@ -155,7 +169,7 @@
             >
               <v-layout>
                 <v-flex>
-                  <span class="no-select">{{ item.name }}</span>
+                  <span>{{ item.name }}</span>
                 </v-flex>
               </v-layout>
             </v-list-tile>
@@ -170,7 +184,7 @@
           <div class="title-wrapper px-3 pb-2">
             <v-layout column class="text-xs-center">
               <v-flex>
-                <span class="headline font-weight-bold no-select">
+                <span class="headline font-weight-bold ">
                   Downtime
                 </span>
               </v-flex>
@@ -184,7 +198,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="py-0">
-          <v-layout row justify-center class="no-select">
+          <v-layout row justify-center>
             <v-flex xs12 sm12 md12 class="px-3">
               <v-layout justify-center row>
                 <v-flex v-if="alert.status" xs12 sm12 md12>
@@ -195,157 +209,161 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row>
-                <v-flex xs1 sm1 md1>
-                  <span class="subheading font-weight-regular">
-                    Mesin
-                  </span>
-                </v-flex>
-                <v-flex xs1 sm1 md1 class="text-xs-center">
-                  <span class="subheading">:</span>
-                </v-flex>
-                <v-flex xs4 sm4 md4>
-                  <span class="subheading font-weight-bold">{{
-                    downtimeMachine === null ? '' : downtimeMachine.name
-                  }}</span>
-                </v-flex>
-              </v-layout>
-              <v-layout row align-center class="mt-3">
-                <v-flex xs1 sm1 md1>
-                  <span class="subheading font-weight-regular">
-                    Tanggal
-                  </span>
-                </v-flex>
-                <v-flex xs1 sm1 md1 class="text-xs-center">
-                  <span class="subheading">:</span>
-                </v-flex>
-                <v-flex xs4 sm4 md4>
-                  <v-menu>
-                    <template slot="activator">
-                      <v-btn light block round>
-                        <span class="text-none">{{ downtimeDate }}</span>
-                      </v-btn>
-                    </template>
-                    <v-date-picker v-model="downtimeDate" no-title />
-                  </v-menu>
-                </v-flex>
-                <v-flex xs1 sm1 md1>
-                  <span class="subheading font-weight-regular ml-5">
-                    Kategori
-                  </span>
-                </v-flex>
-                <v-flex xs1 sm1 md1 class="text-xs-center">
-                  <span class="subheading">:</span>
-                </v-flex>
-                <v-flex xs4 sm4 md4>
-                  <v-select
-                    v-model="downtimeCategoryId"
-                    class="select-option subheading"
-                    :items="downtimeCategories"
-                    item-text="category"
-                    item-value="id"
-                    label="Pilih"
-                    solo
-                    light
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row align-center class="mt-3">
-                <v-flex xs1 sm1 md1>
-                  <span class="subheading font-weight-regular">PO</span>
-                </v-flex>
-                <v-flex xs1 sm1 md1 class="text-xs-center">
-                  <span class="subheading">:</span>
-                </v-flex>
-                <v-flex xs4 sm4 md4>
-                  <v-select
-                    v-model="downtimePOId"
-                    class="select-option subheading"
-                    :items="downtimePOList"
-                    item-text="po"
-                    item-value="id"
-                    label="Pilih"
-                    solo
-                    light
-                  />
-                </v-flex>
-
-                <v-flex xs1 sm1 md1>
-                  <span class="subheading font-weight-regular ml-5">
-                    Alasan
-                  </span>
-                </v-flex>
-                <v-flex xs1 sm1 md1 class="text-xs-center">
-                  <span class="subheading">:</span>
-                </v-flex>
-                <v-flex xs4 sm4 md4>
-                  <v-select
-                    v-model="downtimeReasonId"
-                    class="select-option subheading"
-                    :items="downtimeReasons"
-                    item-text="reason"
-                    item-value="id"
-                    label="Pilih"
-                    solo
-                    light
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row align-center class="mt-3">
-                <v-flex xs1 sm1 md1>
-                  <span class="subheading font-weight-regular">Shift</span>
-                </v-flex>
-                <v-flex xs1 sm1 md1 class="text-xs-center">
-                  <span class="subheading">:</span>
-                </v-flex>
-                <v-flex xs4 sm4 md4>
-                  <v-select
-                    class="select-option subheading"
-                    :items="shiftDowntime"
-                    item-text="shift_name"
-                    item-value="id"
-                    label="Pilih"
-                    solo
-                    light
-                  />
-                </v-flex>
-                <v-flex xs1 sm1 md1>
-                  <span class="subheading font-weight-regular ml-5">
-                    Durasi
-                  </span>
-                </v-flex>
-                <v-flex xs1 sm1 md1 class="text-xs-center">
-                  <span class="subheading">:</span>
-                </v-flex>
-                <v-flex xs4 sm4 md4>
-                  <v-menu
-                    ref="duration"
-                    v-model="duration"
-                    full-width
-                    :close-on-content-click="false"
-                    :return-value.sync="downtimeDuration"
-                  >
-                    <template slot="activator">
-                      <v-text-field
-                        v-model="downtimeDuration"
-                        solo
-                        class="round-text-field"
-                        light
-                        readonly
-                        placeholder="--:--:--"
-                      />
-                    </template>
-                    <v-time-picker
-                      v-if="duration"
-                      v-model="downtimeDuration"
-                      format="24hr"
-                      use-seconds
-                      reactive
-                      @click:second="$refs.duration.save(downtimeDuration)"
+              <v-form>
+                <v-layout row>
+                  <v-flex xs1 sm1 md1>
+                    <span class="subheading font-weight-regular">
+                      Machine
+                    </span>
+                  </v-flex>
+                  <v-flex xs1 sm1 md1 class="text-xs-center">
+                    <span class="subheading">:</span>
+                  </v-flex>
+                  <v-flex xs4 sm4 md4>
+                    <span class="subheading font-weight-bold">{{
+                      downtimeMachine === null ? '' : downtimeMachine.name
+                    }}</span>
+                  </v-flex>
+                </v-layout>
+                <v-layout row align-center class="mt-3">
+                  <v-flex xs1 sm1 md1>
+                    <span class="subheading font-weight-regular">
+                      Date
+                    </span>
+                  </v-flex>
+                  <v-flex xs1 sm1 md1 class="text-xs-center">
+                    <span class="subheading">:</span>
+                  </v-flex>
+                  <v-flex xs4 sm4 md4>
+                    <v-menu>
+                      <template slot="activator">
+                        <v-btn light block round>
+                          <span class="text-none">{{ downtimeDate }}</span>
+                        </v-btn>
+                      </template>
+                      <v-date-picker v-model="downtimeDate" no-title />
+                    </v-menu>
+                  </v-flex>
+                  <v-flex xs1 sm1 md1>
+                    <span class="subheading font-weight-regular ml-5">
+                      Category
+                    </span>
+                  </v-flex>
+                  <v-flex xs1 sm1 md1 class="text-xs-center">
+                    <span class="subheading">:</span>
+                  </v-flex>
+                  <v-flex xs4 sm4 md4>
+                    <v-select
+                      v-model="downtimeCategoryId"
+                      class="select-option subheading"
+                      :items="downtimeCategories"
+                      item-text="category"
+                      item-value="id"
+                      label="Select"
+                      solo
+                      light
                     />
-                  </v-menu>
-                </v-flex>
-              </v-layout>
+                  </v-flex>
+                </v-layout>
+                <v-layout row align-center class="mt-3">
+                  <v-flex xs1 sm1 md1>
+                    <span class="subheading font-weight-regular">
+                      Shift
+                    </span>
+                  </v-flex>
+                  <v-flex xs1 sm1 md1 class="text-xs-center">
+                    <span class="subheading">:</span>
+                  </v-flex>
+                  <v-flex xs4 sm4 md4>
+                    <v-select
+                      v-model="downtimeShiftId"
+                      class="select-option subheading"
+                      :items="shiftDowntime"
+                      item-text="shift_name"
+                      item-value="id"
+                      label="Select"
+                      solo
+                      light
+                    />
+                  </v-flex>
+                  <v-flex xs1 sm1 md1>
+                    <span class="subheading font-weight-regular ml-5">
+                      Reason
+                    </span>
+                  </v-flex>
+                  <v-flex xs1 sm1 md1 class="text-xs-center">
+                    <span class="subheading">:</span>
+                  </v-flex>
+                  <v-flex xs4 sm4 md4>
+                    <v-select
+                      v-model="downtimeReasonId"
+                      class="select-option subheading"
+                      :items="downtimeReasons"
+                      item-text="reason"
+                      item-value="id"
+                      label="Select"
+                      solo
+                      light
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row align-center class="mt-3">
+                  <v-flex xs1 sm1 md1>
+                    <span class="subheading font-weight-regular">PO</span>
+                  </v-flex>
+                  <v-flex xs1 sm1 md1 class="text-xs-center">
+                    <span class="subheading">:</span>
+                  </v-flex>
+                  <v-flex xs4 sm4 md4>
+                    <v-select
+                      v-model="downtimePOId"
+                      class="select-option subheading"
+                      :items="downtimePOList"
+                      item-text="po"
+                      item-value="id"
+                      label="Select"
+                      solo
+                      light
+                    />
+                  </v-flex>
+                  <v-flex xs1 sm1 md1>
+                    <span class="subheading font-weight-regular ml-5">
+                      Duration
+                    </span>
+                  </v-flex>
+                  <v-flex xs1 sm1 md1 class="text-xs-center">
+                    <span class="subheading">:</span>
+                  </v-flex>
+                  <v-flex xs4 sm4 md4>
+                    <v-menu
+                      ref="duration"
+                      v-model="duration"
+                      full-width
+                      :close-on-content-click="false"
+                      :return-value.sync="downtimeDuration"
+                    >
+                      <template slot="activator">
+                        <v-text-field
+                          v-model="downtimeDuration"
+                          solo
+                          class="round-text-field"
+                          light
+                          readonly
+                          placeholder="--:--:--"
+                        />
+                      </template>
+                      <v-time-picker
+                        v-if="duration"
+                        v-model="downtimeDuration"
+                        format="24hr"
+                        use-seconds
+                        reactive
+                        @click:second="$refs.duration.save(downtimeDuration)"
+                      />
+                    </v-menu>
+                  </v-flex>
+                </v-layout>
+              </v-form>
             </v-flex>
           </v-layout>
         </v-card-text>
@@ -355,10 +373,10 @@
             color="green"
             large
             round
-            class="mx-5 no-select mt-3"
+            class="mx-5  mt-3"
             @click="storeDowntime()"
           >
-            simpan
+            save
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -370,7 +388,7 @@
           <div class="title-wrapper px-3 pb-2">
             <v-layout column class="text-xs-center">
               <v-flex>
-                <span class="headline font-weight-bold no-select">
+                <span class="headline font-weight-bold ">
                   Rework
                 </span>
               </v-flex>
@@ -393,7 +411,7 @@
               />
             </v-flex>
           </v-layout>
-          <v-layout row justify-center align-center class="no-select px-5">
+          <v-layout row justify-center align-center class=" px-5">
             <v-flex xs5 sm5 md5 class="pl-5">
               <span class="subheading font-weight-regular">
                 Value
@@ -404,6 +422,7 @@
             </v-flex>
             <v-flex xs6 sm6 md6>
               <v-text-field
+                v-model="reworkValue"
                 solo
                 class="round-text-field .rework-input"
                 light
@@ -436,10 +455,10 @@
             color="green"
             large
             round
-            class="mx-5 no-select"
+            class="mx-5 "
             @click="storeRework()"
           >
-            simpan
+            save
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -500,17 +519,21 @@ export default {
       hmiTypeDialog: false,
       reworkDialog: false,
       reworkCategorySelected: null,
-      reworkValue: 0,
+      reworkValue: null,
       lines: [],
       lineIdSelected: null,
       mechines: [],
       shiftDowntime: [],
+      downtimeShiftId: null,
       duration: false
     }
   },
   computed: {
     hmi() {
       return this.$store.getters.hmi
+    },
+    user() {
+      return this.$store.getters.user
     }
   },
   watch: {
@@ -520,40 +543,27 @@ export default {
     downtimeCategoryId(value) {
       if (value !== null) {
         this.$axios
-          .post(process.env.SERVICE_URL + '/downtime-reason-machine', {
-            machine_id: value
-          })
+          .get(
+            process.env.SERVICE_URL +
+              '/downtime-reason-machine/category?machine_id=' +
+              this.downtimeMachine.id +
+              '&categori_id=' +
+              value
+          )
           .then(res => {
-            if (res.status == 201) {
+            if (res.status == 200) {
               this.downtimeReasons = res.data
             }
           })
       }
     },
     downtimeDate(value) {
-      this.downtimePOList = []
-      this.$axios
-        .get(
-          process.env.SERVICE_URL +
-            '/rencana-produksi/find?date=' +
-            value +
-            '&line_id=' +
-            this.lineIdSelected
-        )
-        .then(res => {
-          if (res.status == 200) {
-            for (let i = 0; i < res.data.length; i++) {
-              this.downtimePOList.push({
-                id: res.data[i].id,
-                po:
-                  res.data[i].po_number +
-                  ' ( ' +
-                  res.data[i].shift.shift_name +
-                  ' )'
-              })
-            }
-          }
-        })
+      if (this.downtimeShiftId !== null) {
+        this.getPOList()
+      }
+    },
+    downtimeShiftId(value) {
+      this.getPOList()
     }
   },
   mounted() {
@@ -630,6 +640,7 @@ export default {
             this.connected = true
             if (res.data === '') {
               this.shift = 'Shift -'
+              this.poActiveId = null
             } else {
               this.poActiveId = res.data.id
               this.shift = res.data.shift.shift_name
@@ -637,6 +648,29 @@ export default {
           } else {
             this.connected = false
             this.poActiveId = null
+          }
+        })
+    },
+    getPOList() {
+      this.downtimePOList = []
+      this.$axios
+        .get(
+          process.env.SERVICE_URL +
+            '/rencana-produksi/find/shift?date=' +
+            this.downtimeDate +
+            '&shift_id=' +
+            this.downtimeShiftId +
+            '&line_id=' +
+            this.lineIdSelected
+        )
+        .then(res => {
+          if (res.status == 200) {
+            for (let i = 0; i < res.data.length; i++) {
+              this.downtimePOList.push({
+                id: res.data[i].id,
+                po: res.data[i].po_number
+              })
+            }
           }
         })
     },
@@ -650,6 +684,7 @@ export default {
               type: res.data[i].downtime_category.category,
               mechine: res.data[i].machine.name,
               duration: res.data[i].duration,
+              shift: res.data[i].shift.shift_name,
               date: res.data[i].created_at.substring(0, 10),
               time: res.data[i].created_at.substring(11, 19)
             })
@@ -658,14 +693,12 @@ export default {
     },
     showKeyboard(e) {
       this.input = e.target
-      this.downtimeDuration = e.target
       this.reworkValue = e.target
       this.keyboard.layout = e.target.dataset.layout
       this.keyboard.visible = true
     },
     accept(text) {
       this.input = text
-      this.downtimeDuration = text
       this.reworkValue = text
       this.hideKeyboard()
     },
@@ -693,57 +726,94 @@ export default {
       this.downtimeMachine = null
       this.downtimeDialog = false
       this.downtimeCategories = []
+      this.downtimePOId = null
+      this.downtimeDuration = null
+      this.downtimeShiftId = null
       this.downtimeCategoryId = null
       this.downtimeReasons = []
       this.downtimeReasonId = null
       this.keyboard.visible = false
+      this.alert = {
+        status: false,
+        type: 'info',
+        message: ''
+      }
     },
-    storeDowntime() {
-      if (!this.keyboard.visible) {
-        if (
-          this.downtimeCategoryId === null ||
-          this.downtimeReasonId === null ||
-          this.downtimePOId === null ||
-          this.downtimeDuration === null
-        ) {
+    allFieldFilled() {
+      if (
+        this.downtimeDuration === null ||
+        this.downtimeReasonId === null ||
+        this.downtimeShiftId === null
+      ) {
+        return false
+      } else {
+        return true
+      }
+    },
+    validateDowntimeForm() {
+      if (this.downtimeCategoryId !== null) {
+        if (this.downtimeCategoryId == 1) {
+          if (this.allFieldFilled()) {
+            return true
+          } else {
+            this.alert = {
+              status: true,
+              type: 'warning',
+              message: 'All field are required except PO for Planned Downtime'
+            }
+            return false
+          }
+        } else if (this.allFieldFilled()) {
+          return true
+        } else {
           this.alert = {
             status: true,
             type: 'warning',
-            message: 'Semua field harus diisi'
+            message: 'All field are required'
           }
-        } else {
-          this.$axios
-            .post(process.env.SERVICE_URL + '/downtime', {
-              duration: this.convertMinutes(this.downtimeDuration),
-              rencanaProduksiId: this.downtimePOId,
-              machineId: this.downtimeMachine.id,
-              downtimeCategoryId: this.downtimeCategoryId,
-              downtimeReasonId: this.downtimeReasonId
-            })
-            .then(res => {
-              if (res.data.success) {
-                this.resetDowntimeDialog()
-                this.snackbar = {
-                  status: true,
-                  text: 'Data downtime ditambahkan',
-                  color: 'success'
-                }
-                this.getDowntimeHistories()
-              } else {
-                this.snackbar = {
-                  status: true,
-                  text: 'Data downtime gagal ditambahkan',
-                  color: 'error'
-                }
-              }
-            })
+          return false
         }
-      } else {
+      } else if (!this.allFieldFilled()) {
         this.alert = {
           status: true,
           type: 'warning',
-          message: 'Tutup Virtual Keyboard dulu baru klik simpan'
+          message: 'All field are required'
         }
+        return false
+      } else {
+        return true
+      }
+    },
+    storeDowntime() {
+      if (this.validateDowntimeForm()) {
+        this.$axios
+          .post(process.env.SERVICE_URL + '/downtime', {
+            date: this.downtimeDate,
+            shiftId: this.downtimeShiftId,
+            lineId: this.lineIdSelected,
+            duration: this.convertMinutes(this.downtimeDuration),
+            rencanaProduksiId: this.downtimePOId,
+            machineId: this.downtimeMachine.id,
+            downtimeCategoryId: this.downtimeCategoryId,
+            downtimeReasonId: this.downtimeReasonId
+          })
+          .then(res => {
+            if (res.data.success) {
+              this.resetDowntimeDialog()
+              this.snackbar = {
+                status: true,
+                text: 'Add Downtime succesfully',
+                color: 'success'
+              }
+              this.getDowntimeHistories(this.lineIdSelected)
+            } else {
+              this.snackbar = {
+                status: true,
+                text: 'Add downtime failed',
+                color: 'error'
+              }
+            }
+          })
       }
     },
     storeRework() {
@@ -752,18 +822,18 @@ export default {
           this.alert = {
             status: true,
             type: 'warning',
-            message: 'Tidak ada PO Aktif di line ini'
+            message: 'There is no Production order in this line'
           }
         } else if (this.reworkValue == 0) {
           this.alert = {
             status: true,
             type: 'warning',
-            message: 'Rework value harus diisi'
+            message: 'Rework value is required'
           }
         } else {
           this.$axios
-            .post(process.env.SERVICE_URL + '/lakban/rework-line', {
-              total: this.reworkValue,
+            .patch(process.env.SERVICE_URL + '/rencana-produksi/rework-line', {
+              total: parseFloat(this.reworkValue),
               rencanaProduksiId: this.poActiveId
             })
             .then(res => {
@@ -787,22 +857,40 @@ export default {
         this.alert = {
           status: true,
           type: 'warning',
-          message: 'Tutup Virtual Keyboard dulu baru klik simpan'
+          message: 'Close keyboard then click save'
         }
       }
     },
     showReworkDialog() {
-      this.reworkDialog = true
+      if (this.poActiveId === null) {
+        this.snackbar = {
+          status: true,
+          text: 'There is no active Production Order',
+          color: 'info'
+        }
+      } else {
+        this.reworkDialog = true
+      }
     },
     resetReworkDialog() {
-      this.reworkValue = 0
+      this.reworkValue = null
       this.downtimeDuration = 0
       this.reworkDialog = false
+      this.alert = {
+        status: false,
+        type: 'info',
+        message: ''
+      }
     },
     convertMinutes(time) {
       const temp = time.split(':')
-      const minute = temp[0] * 60 + temp[1] + temp[2] / 60
+      const minute =
+        parseInt(temp[0]) * 60 + parseInt(temp[1]) + parseInt(temp[2]) / 60
       return minute
+    },
+    logout() {
+      this.$store.dispatch('logout')
+      this.$router.push('/login')
     }
   }
 }

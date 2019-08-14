@@ -46,7 +46,8 @@ export default {
     this.currentDateTime =
       this.formatDate(this.currentDate) + ' ' + this.currentTime
 
-    this.currentDayDateTime = this.day[date.getDay] + ', ' + this.currentDate
+    this.currentDayDateTime =
+      this.day[date.getDay()] + ', ' + this.currentDate + ' ' + this.currentTime
   },
   methods: {
     formatDate(date) {

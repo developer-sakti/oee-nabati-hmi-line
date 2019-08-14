@@ -40,6 +40,7 @@ export default {
     '@/plugins/vuetify',
     '~/plugins/components-register',
     '~/plugins/vue-scroll',
+    { src: '~/plugins/timeselector', ssr: false },
     '~/plugins/vue-keyboard',
     '~/plugins/google-maps',
     { src: '~/plugins/nuxt-client.js', ssr: false }

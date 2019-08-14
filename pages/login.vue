@@ -2,7 +2,7 @@
   <v-app id="login" class="primary">
     <v-content>
       <v-container fluid fill-height>
-        <v-layout align-center justify-center>
+        <v-layout align-center justify-center row wrap>
           <v-flex xs10 sm8 md6>
             <v-card class="elevation-5 px-5 pt-3">
               <v-card-title>
@@ -11,15 +11,15 @@
                     <v-responsive>
                       <v-img
                         src="/mvl.png"
-                        max-width="350"
-                        max-height="150"
+                        max-width="200"
+                        max-height="120"
                         class="text-xs-center"
                       />
                     </v-responsive>
                   </v-flex>
                 </v-layout>
               </v-card-title>
-              <v-card-text>
+              <v-card-text class="py-0">
                 <alert
                   v-if="alert.status"
                   :message="alert.message"
@@ -33,9 +33,11 @@
                     label="Username"
                     type="text"
                     class="grey-field"
+                    data-layout="normal"
                     solo
                     flat
                     required
+                    @focus="show"
                   />
                   <v-text-field
                     v-model="form.password"
@@ -46,7 +48,9 @@
                     class="grey-field"
                     label="Password"
                     type="password"
+                    data-layout="normal"
                     required
+                    @focus="show"
                   />
                   <v-layout row wrap>
                     <v-flex xs12 sm12 md12 class="pb-3">
@@ -63,7 +67,7 @@
                   </v-layout>
                 </v-form>
               </v-card-text>
-              <v-card-actions>
+              <v-card-actions class="pt-0">
                 <v-layout row wrap>
                   <v-flex xs8 sm9 md10 class="text-xs-right">
                     <span class="mr-3">Supported by</span>
@@ -76,6 +80,18 @@
                 </v-layout>
               </v-card-actions>
             </v-card>
+          </v-flex>
+          <v-flex xs12 sm12 md12>
+            <vue-touch-keyboard
+              v-if="keyboard.visible"
+              :options="keyboard.ops"
+              :layout="keyboard.layout"
+              :cancel="hide"
+              :accept="accept"
+              :input="input"
+              :next="next"
+              class="mt-3"
+            />
           </v-flex>
         </v-layout>
       </v-container>
@@ -90,6 +106,15 @@ export default {
   mixins: [defaultMixins],
   data() {
     return {
+      keyboard: {
+        visible: false,
+        ops: {
+          useKbEvents: false,
+          preventClickEvent: false
+        },
+        layout: 'normal'
+      },
+      input: null,
       form: {
         username: null,
         password: null,
@@ -103,6 +128,17 @@ export default {
     }
   },
   methods: {
+    show(e) {
+      this.input = e.target
+      this.keyboard.layout = e.target.dataset.layout
+      this.keyboard.visible = true
+    },
+    hide() {
+      this.keyboard.visible = false
+    },
+    accept() {
+      this.hide()
+    },
     login() {
       if (this.$refs.form.validate()) {
         this.snackbar = true
