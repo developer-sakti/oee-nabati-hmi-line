@@ -89,9 +89,6 @@ export default {
     }
   },
   env: {
-    SERVICE_URL:
-      'http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1',
-    // 'http://192.168.10.131:8001/api/v1',
-    GMAPS_KEY: 'AIzaSyAfFcmWP3mrvMxRhFgdX91lX8HN7q7HS3s'
+    SERVICE_URL: 'http://192.168.13.2:8081/api/v1'
   }
 }
