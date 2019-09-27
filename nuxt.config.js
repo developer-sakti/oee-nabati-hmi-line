@@ -89,6 +89,6 @@ export default {
     }
   },
   env: {
-    SERVICE_URL: 'http://192.168.13.2:8081/api/v1'
+    SERVICE_URL: 'http://dev-oee-sim.machinevision.global:8081/api/v1'
   }
 }
